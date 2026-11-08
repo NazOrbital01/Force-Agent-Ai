@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Forcx Agent Ai</title>
+  <title>Forcx Agent By Naze</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -435,7 +435,19 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="firebase-config.js"></script>
+  <script>
+    // Config Firebase project kamu — ditempel langsung di sini supaya tidak
+    // tergantung pada Vercel menyajikan firebase-config.js sebagai file statis.
+    window.FIREBASE_CONFIG = {
+      apiKey: "AIzaSyAN2QvtXrIOw_lBLl0mJhj40MQAmLtPaYg",
+      authDomain: "forcxagent.firebaseapp.com",
+      projectId: "forcxagent",
+      storageBucket: "forcxagent.firebasestorage.app",
+      messagingSenderId: "150380587288",
+      appId: "1:150380587288:web:3124bf2bef67d1bdded66d",
+      measurementId: "G-85XHFV4KME"
+    };
+  </script>
 
   <script>
     const $ = (sel) => document.querySelector(sel);
