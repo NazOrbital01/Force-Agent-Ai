@@ -1062,13 +1062,27 @@
     }
 
     function initFirebase() {
-      if (!window.FIREBASE_CONFIG || window.FIREBASE_CONFIG.apiKey === 'GANTI_DENGAN_API_KEY') {
-        $('#gateErr').textContent = 'firebase-config.js belum diisi. Lihat SETUP.md.';
+      const cfg = window.FIREBASE_CONFIG;
+      const looksUnfilled = !cfg || !cfg.apiKey || cfg.apiKey === 'GANTI_DENGAN_API_KEY' || !cfg.projectId || cfg.projectId === 'GANTI_PROJECT_ID';
+      if (looksUnfilled) {
+        $('#gateErr').textContent = 'firebase-config.js belum diisi dengan config Firebase project kamu. Lihat SETUP.md langkah 2.';
+        $('#googleSignInBtn').disabled = true;
+        $('#googleSignInBtn').style.opacity = '0.5';
+        $('#googleSignInBtn').style.cursor = 'not-allowed';
         return;
       }
-      firebaseApp = firebase.initializeApp(window.FIREBASE_CONFIG);
-      auth = firebase.auth();
-      db = firebase.firestore();
+      if (typeof firebase === 'undefined') {
+        $('#gateErr').textContent = 'Firebase SDK gagal dimuat (cek koneksi internet / ad-blocker), coba refresh.';
+        return;
+      }
+      try {
+        firebaseApp = firebase.initializeApp(cfg);
+        auth = firebase.auth();
+        db = firebase.firestore();
+      } catch (e) {
+        $('#gateErr').textContent = 'Gagal inisialisasi Firebase: ' + (e.message || e);
+        return;
+      }
 
       auth.onAuthStateChanged(async (user) => {
         if (user) {
@@ -1092,6 +1106,10 @@
 
     $('#googleSignInBtn').addEventListener('click', async () => {
       $('#gateErr').textContent = '';
+      if (!auth) {
+        $('#gateErr').textContent = 'Firebase belum siap — cek firebase-config.js sudah diisi benar, lalu refresh halaman.';
+        return;
+      }
       try {
         const provider = new firebase.auth.GoogleAuthProvider();
         await auth.signInWithPopup(provider);
