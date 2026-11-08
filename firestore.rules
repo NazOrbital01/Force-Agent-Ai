@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users can read only their own profile. All writes happen server-side
+    // (Admin SDK bypasses rules), so no client write path is allowed at all —
+    // this prevents anyone from granting themselves role/tokens from devtools.
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Keys are never read or written directly by clients — redemption and
+    // creation both go through /api/redeem and /api/admin/create-key.
+    match /keys/{code} {
+      allow read, write: if false;
+    }
+
+    // Announcements are public read-only (so the popup can show package +
+    // code to every signed-in user); writes only via the owner-only endpoint.
+    match /announcements/{id} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+  }
+}
