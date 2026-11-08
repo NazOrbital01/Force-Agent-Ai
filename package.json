@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": "26.x",
+    "node": "22.x"
+  },
+  "dependencies": {
     "firebase-admin": "^12.1.0"
   }
 }
