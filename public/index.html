@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Forcx Agent By Naze</title>
+  <title>Forcx Agent Ai</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -149,6 +149,20 @@
     .code-block code { font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55; white-space: pre; color: #d7dce8; }
     [data-theme="light"] .code-block code { color: #24292f; }
 
+    /* ---------- File card (file deliverables render as a clickable block, not raw text) ---------- */
+    .file-card { margin: 12px 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--bg-elev-2); max-width: 360px; }
+    .file-card-head { width: 100%; display: flex; align-items: center; gap: 10px; padding: 11px 13px; background: transparent; border: 0; text-align: left; color: var(--text); }
+    .file-card-head:hover { background: var(--bg-elev-3); }
+    .file-card .file-icon { width: 30px; height: 30px; border-radius: 8px; background: var(--accent-ink); border: 1px solid var(--accent-dim); display: grid; place-items: center; font-size: 14px; flex-shrink: 0; }
+    .file-card .file-info { min-width: 0; flex: 1; }
+    .file-card .file-name { font-family: var(--font-mono); font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .file-card .file-meta { font-size: 11px; color: var(--muted-dim); margin-top: 1px; }
+    .file-card .file-chevron { color: var(--muted); font-size: 12px; transition: transform 0.15s; flex-shrink: 0; }
+    .file-card.open .file-chevron { transform: rotate(90deg); }
+    .file-card-body { border-top: 1px solid var(--border); }
+    .file-card-body[hidden] { display: none; }
+    .file-card-body .code-block { margin: 0; border: 0; border-radius: 0; }
+
     /* ---------- Composer ---------- */
     .composer-wrap { padding: 10px 20px 16px; flex-shrink: 0; }
     .composer { max-width: 820px; margin: 0 auto; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px; transition: border-color 0.15s; }
@@ -227,6 +241,23 @@
     .google-btn:hover { border-color: var(--accent-dim); }
     .google-btn svg { width: 18px; height: 18px; }
     .login-gate .gate-err { color: var(--danger); font-size: 12.5px; font-family: var(--font-mono); min-height: 16px; }
+
+    /* ---------- Preferences page (full page, not a modal) ---------- */
+    .prefs-page { position: fixed; inset: 0; background: var(--bg); z-index: 180; display: none; flex-direction: column; }
+    .prefs-page.open { display: flex; }
+    .prefs-page-head { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--border-soft); flex-shrink: 0; }
+    .prefs-page-head h1 { margin: 0; font-size: 16.5px; font-weight: 700; }
+    .prefs-back-btn { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-elev-2); color: var(--text); font-size: 16px; }
+    .prefs-back-btn:hover { border-color: var(--accent-dim); }
+    .prefs-page-body { flex: 1; overflow-y: auto; padding: 20px; }
+    .prefs-page-inner { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+    .prefs-section { display: flex; flex-direction: column; gap: 14px; }
+    .prefs-section-title { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted-dim); }
+    .prefs-section-hint { font-size: 12px; color: var(--muted); margin-top: -8px; line-height: 1.5; }
+    .prefs-readonly-box { background: var(--bg-elev); border: 1px solid var(--border-soft); border-radius: 9px; padding: 11px 13px; font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+    .prefs-page-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid var(--border-soft); flex-shrink: 0; }
+    .prefs-save-note { font-size: 11.5px; color: var(--signal); font-family: var(--font-mono); display: none; align-self: center; margin-right: auto; }
+    .prefs-save-note.show { display: inline-block; }
 
     /* ---------- Announcement toast ---------- */
     .announce-toast { position: fixed; right: 18px; bottom: 90px; z-index: 150; max-width: 320px; background: var(--bg-elev); border: 1px solid var(--accent-dim); border-radius: 12px; padding: 14px; box-shadow: 0 14px 40px rgba(0,0,0,0.4); display: none; }
@@ -318,7 +349,7 @@
     <main class="main">
       <header class="topbar">
         <button class="icon-btn menu-btn" id="menuBtn" type="button">☰</button>
-        <div class="model-badge" id="modelBadge">claude-sonnet-4-6</div>
+        <div class="model-badge" id="modelBadge">Normal</div>
         <div class="topbar-right">
           <div class="status-line"><span class="status-dot" id="statusDot"></span><span id="statusText">Ready</span></div>
         </div>
@@ -350,19 +381,52 @@
     </main>
   </div>
 
-  <!-- ===================== PREFERENCES MODAL ===================== -->
-  <div class="modal-overlay" id="prefsModal">
-    <div class="modal">
-      <div class="modal-head"><h2>Preferences</h2><button class="icon-btn" id="closePrefs" type="button">×</button></div>
-      <div class="modal-body">
-        <label class="field"><span>System prompt (mode aktif)</span><textarea id="systemPrompt" rows="4"></textarea></label>
-        <label class="field"><span>Temperature <b id="tempValue">0.7</b></span><input type="range" id="temperature" min="0" max="1.5" step="0.1" value="0.7" /></label>
-        <label class="field"><span>Max tokens</span><input type="number" id="maxTokens" min="256" max="32000" step="256" value="4096" /></label>
-        <label class="field"><span>Theme</span><select id="themeSelect"><option value="dark">Dark</option><option value="light">Light</option></select></label>
+  <!-- ===================== PREFERENCES PAGE ===================== -->
+  <div class="prefs-page" id="prefsPage">
+    <div class="prefs-page-head">
+      <button class="prefs-back-btn" id="prefsBackBtn" type="button">←</button>
+      <h1>Preferences</h1>
+    </div>
+    <div class="prefs-page-body">
+      <div class="prefs-page-inner">
+
+        <div class="prefs-section">
+          <div class="prefs-section-title">Personalisasi</div>
+          <div class="prefs-section-hint">Ini preferensi pribadi kamu, tersimpan di perangkat ini untuk akun kamu — terpisah dari prompt dasar tiap mode yang sudah diatur sistem.</div>
+          <label class="field"><span>Kamu mau dipanggil apa?</span><input type="text" id="prefNickname" placeholder="mis. Naz" autocomplete="off" /></label>
+          <label class="field"><span>Maunya sikap Forcx seperti apa?</span><input type="text" id="prefAttitude" placeholder="mis. santai, to the point, formal" autocomplete="off" /></label>
+          <label class="field"><span>Jelaskan lebih detail!</span><textarea id="prefDetail" rows="4" placeholder="Hal lain yang Forcx perlu tahu tentang gaya jawaban yang kamu mau…"></textarea></label>
+        </div>
+
         <div class="modal-divider"></div>
-        <button class="danger-btn" id="clearChats" type="button">Delete all saved chats</button>
+
+        <div class="prefs-section">
+          <div class="prefs-section-title">Prompt dasar mode aktif</div>
+          <div class="prefs-readonly-box" id="basePromptReadonly">—</div>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <div class="prefs-section">
+          <div class="prefs-section-title">Model & tampilan</div>
+          <label class="field"><span>Temperature <b id="tempValue">0.7</b></span><input type="range" id="temperature" min="0" max="1.5" step="0.1" value="0.7" /></label>
+          <label class="field"><span>Max tokens per balasan</span><input type="number" id="maxTokens" min="256" max="200000" step="256" value="8192" /></label>
+          <label class="field"><span>Theme</span><select id="themeSelect"><option value="dark">Dark</option><option value="light">Light</option></select></label>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <div class="prefs-section">
+          <div class="prefs-section-title">Danger zone</div>
+          <button class="danger-btn" id="clearChats" type="button">Delete all saved chats</button>
+        </div>
+
       </div>
-      <div class="modal-foot"><button class="ghost-btn" id="cancelPrefs" type="button">Cancel</button><button class="primary-btn" id="savePrefs" type="button">Save</button></div>
+    </div>
+    <div class="prefs-page-foot">
+      <span class="prefs-save-note" id="prefsSaveNote">Tersimpan ✓</span>
+      <button class="ghost-btn" id="prefsBackBtn2" type="button">Tutup</button>
+      <button class="primary-btn" id="savePrefs" type="button">Save</button>
     </div>
   </div>
 
@@ -467,7 +531,7 @@
     const LOCKED_MODES = new Set(['code', 'work']);
     const UNLOCKED_ROLES = new Set(['pro', 'premium', 'owner']);
     const TOKEN_LIMITS = { free: 35000, pro: 50000, premium: 100000, owner: Infinity };
-    const DEFAULT_PREFS = { temperature: 0.7, maxTokens: 4096, theme: 'dark' };
+    const DEFAULT_PREFS = { temperature: 0.7, maxTokens: 8192, theme: 'dark' };
 
     const state = {
       chats: [], currentChatId: null, messages: [], incognito: false,
@@ -477,6 +541,32 @@
 
     // appUser mirrors the Firestore user doc, refreshed after bootstrap/redeem/chat.
     const appUser = { uid: null, email: null, name: null, photo: null, role: 'free', tokenLimit: 35000, tokensUsed: 0 };
+
+    // Personal preferences (nickname / attitude / extra detail) — stored locally per
+    // account, layered ON TOP of the fixed default prompts in MODES above. Editing
+    // these never changes the html defaults; it's a separate, per-person layer.
+    const personalPrefs = { nickname: '', attitude: '', detail: '' };
+    function personalPrefsKey() { return `forcx_personal_${appUser.uid || 'anon'}`; }
+    function loadPersonalPrefs() {
+      try {
+        const raw = localStorage.getItem(personalPrefsKey());
+        const parsed = raw ? JSON.parse(raw) : {};
+        personalPrefs.nickname = parsed.nickname || '';
+        personalPrefs.attitude = parsed.attitude || '';
+        personalPrefs.detail = parsed.detail || '';
+      } catch (_) { personalPrefs.nickname = ''; personalPrefs.attitude = ''; personalPrefs.detail = ''; }
+    }
+    function savePersonalPrefs() {
+      try { localStorage.setItem(personalPrefsKey(), JSON.stringify(personalPrefs)); } catch (_) {}
+    }
+    function buildPersonalizationBlock() {
+      if (!personalPrefs.nickname && !personalPrefs.attitude && !personalPrefs.detail) return '';
+      let out = '\n\nPersonalisasi dari user (preferensi pribadi, terpisah dari prompt dasar di atas):';
+      if (personalPrefs.nickname) out += `\n- Panggil user: ${personalPrefs.nickname}`;
+      if (personalPrefs.attitude) out += `\n- Sikap yang diinginkan: ${personalPrefs.attitude}`;
+      if (personalPrefs.detail) out += `\n- Instruksi tambahan dari user: ${personalPrefs.detail}`;
+      return out;
+    }
 
     let firebaseApp = null, auth = null, db = null;
     let mdRenderer = null, pendingRender = null, renderRaf = null;
@@ -498,7 +588,7 @@
       const welcomeLogo = $('.welcome-logo');
       if (welcomeLogo) welcomeLogo.src = modeConfig.logo;
       $$('.avatar.ai').forEach(img => img.src = modeConfig.logo);
-      $('#modelBadge').textContent = modeConfig.model;
+      $('#modelBadge').textContent = modeConfig.name;
     }
 
     // === MODE LOCK UI ===
@@ -558,9 +648,24 @@
         const filename = fileMatch ? fileMatch[1] : null;
         const cleanInfo = infostring.replace(/(?:filename|file)=["']?([^"'\s]+)["']?/g, '').trim();
         const lang = cleanInfo.split(/\s+/)[0] || 'code';
-        let actionsHtml = '<button class="copy-btn" type="button">Copy</button>';
-        if (filename) actionsHtml = `<button class="download-btn" type="button" data-filename="${escapeHtml(filename)}">⬇ Download</button>` + actionsHtml;
-        return '<div class="code-block"><div class="code-head"><span class="code-lang">' + escapeHtml(lang) + (filename ? ` - ${escapeHtml(filename)}` : '') + '</span><div class="code-actions">' + actionsHtml + '</div></div><pre><code>' + escapeHtml(code) + '</code></pre></div>';
+        const actionsHtml = `<button class="download-btn" type="button" data-filename="${escapeHtml(filename || 'file.' + lang)}">⬇ Download</button><button class="copy-btn" type="button">Copy</button>`;
+        const codeBlock = '<div class="code-block"><div class="code-head"><span class="code-lang">' + escapeHtml(lang) + '</span><div class="code-actions">' + actionsHtml + '</div></div><pre><code>' + escapeHtml(code) + '</code></pre></div>';
+
+        // Files the model delivers via `filename=` render as a collapsed, clickable
+        // file card (like a real file attachment) instead of a wall of raw text.
+        if (filename) {
+          const lineCount = code.split('\n').length;
+          return '<div class="file-card">' +
+            '<button class="file-card-head" type="button">' +
+              '<span class="file-icon">📄</span>' +
+              '<span class="file-info"><span class="file-name">' + escapeHtml(filename) + '</span>' +
+              '<span class="file-meta">' + lineCount + ' baris · ' + escapeHtml(lang) + '</span></span>' +
+              '<span class="file-chevron">▸</span>' +
+            '</button>' +
+            '<div class="file-card-body" hidden>' + codeBlock + '</div>' +
+          '</div>';
+        }
+        return codeBlock;
       };
       mdRenderer.image = function (href, title, text) {
         const t = title ? ' title="' + escapeHtml(title) + '"' : '';
@@ -746,8 +851,9 @@
     function buildApiMessages() {
       const messages = [];
       const basePrompt = MODES[state.mode].prompt;
-      const fileInstruction = "\n\nIMPORTANT: If you need to provide a file (new or modified) to the user, format the code block with a filename attribute: ` ```language filename=\"filename.ext\" `. If you need to show a video you reference by URL, use a fenced block: ` ```video url=\"https://...\" `. Images can be returned as normal markdown ![alt](url) and will render inline.";
-      messages.push({ role: 'system', content: basePrompt + fileInstruction });
+      const fileInstruction = "\n\nIMPORTANT: If you need to provide a file (new or modified) to the user — zip contents, html, py, js, or any other file — format the code block with a filename attribute: ` ```language filename=\"filename.ext\" `. It will render in the UI as a clickable file card, not raw text. ALWAYS output the file's full, complete content inside that block: never truncate, never use '...', '// rest of code', or any placeholder standing in for real content, no matter how long the file is. If the user wants several files, output one complete fenced block per file, each with its own filename. If you need to show a video you reference by URL, use a fenced block: ` ```video url=\"https://...\" `. Images can be returned as normal markdown ![alt](url) and will render inline.";
+      const personalization = buildPersonalizationBlock();
+      messages.push({ role: 'system', content: basePrompt + fileInstruction + personalization });
       for (const m of state.messages) {
         if (m.role === 'assistant' && !m.content) continue;
         if (m.isNotice) continue;
@@ -800,6 +906,74 @@
       renderMessages();
     }
 
+    const MAX_AUTO_CONTINUATIONS = 8;
+    const CONTINUE_NUDGE = 'Lanjutkan PERSIS dari karakter terakhir yang kamu tulis barusan — jangan mengulang apa pun yang sudah ditulis, jangan beri ringkasan, langsung sambung sampai benar-benar selesai (termasuk isi file yang belum rampung).';
+
+    // One raw call to /api/chat. Returns { text, finishReason }. Streams incremental
+    // text into the UI via onDelta(textSoFarThisCall) as it arrives.
+    async function callModelOnce(apiMessages, onDelta, signal) {
+      const idToken = await getIdToken();
+      const payload = {
+        model: MODES[state.mode].model,
+        mode: state.mode,
+        messages: apiMessages,
+        temperature: state.prefs.temperature,
+        max_tokens: state.prefs.maxTokens,
+        stream: true,
+      };
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+        body: JSON.stringify(payload),
+        signal,
+      });
+
+      if (!response.ok) {
+        let errMsg = 'API ' + response.status;
+        try { const errJson = await response.json(); errMsg = errJson.error?.message || errJson.error || errMsg; } catch (_) {}
+        throw new Error(errMsg);
+      }
+
+      const contentType = response.headers.get('content-type') || '';
+      let text = '';
+      let finishReason = null;
+
+      if (contentType.includes('text/event-stream')) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop();
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed.startsWith('data:')) continue;
+            const data = trimmed.slice(5).trim();
+            if (!data || data === '[DONE]') continue;
+            try {
+              const json = JSON.parse(data);
+              const delta = json.choices?.[0]?.delta?.content ?? '';
+              if (delta) { text += delta; onDelta(text); }
+              const fr = json.choices?.[0]?.finish_reason;
+              if (fr) finishReason = fr;
+            } catch (_) {}
+          }
+        }
+      } else {
+        const raw = await response.text();
+        let data;
+        try { data = JSON.parse(raw); } catch (_) { data = { error: { message: raw.slice(0, 500) } }; }
+        text = data.choices?.[0]?.message?.content ?? data.error?.message ?? '';
+        finishReason = data.choices?.[0]?.finish_reason || (text ? 'stop' : null);
+        onDelta(text);
+      }
+
+      return { text, finishReason };
+    }
+
     async function requestAssistant() {
       state.isStreaming = true;
       state.abortController = new AbortController();
@@ -813,71 +987,44 @@
       const lastEl = messageEls[messageEls.length - 1];
       const contentEl = lastEl ? lastEl.querySelector('.message-content') : null;
 
-      const payload = {
-        model: MODES[state.mode].model,
-        mode: state.mode,
-        messages: buildApiMessages(),
-        temperature: state.prefs.temperature,
-        max_tokens: state.prefs.maxTokens,
-        stream: true,
-      };
+      const baseMessages = buildApiMessages();
+      let apiMessages = baseMessages;
+      let combinedText = '';
+      let finishReason = null;
+      let attempt = 0;
 
       try {
-        const idToken = await getIdToken();
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
-          body: JSON.stringify(payload),
-          signal: state.abortController.signal,
-        });
+        do {
+          attempt++;
+          const { text: callText, finishReason: fr } = await callModelOnce(
+            apiMessages,
+            (textSoFarThisCall) => {
+              assistantMessage.content = combinedText + textSoFarThisCall;
+              scheduleAssistantRender(contentEl, assistantMessage.content);
+            },
+            state.abortController.signal
+          );
+          combinedText += callText;
+          finishReason = fr;
+          assistantMessage.content = combinedText;
+          updateAssistantContent(contentEl, combinedText);
 
-        if (!response.ok) {
-          let errMsg = 'API ' + response.status;
-          try { const errJson = await response.json(); errMsg = errJson.error?.message || errJson.error || errMsg; } catch (_) {}
-          throw new Error(errMsg);
-        }
-
-        const contentType = response.headers.get('content-type') || '';
-        let fullText = '';
-
-        if (contentType.includes('text/event-stream')) {
-          const reader = response.body.getReader();
-          const decoder = new TextDecoder();
-          let buffer = '';
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split('\n');
-            buffer = lines.pop();
-            for (const line of lines) {
-              const trimmed = line.trim();
-              if (!trimmed.startsWith('data:')) continue;
-              const data = trimmed.slice(5).trim();
-              if (!data || data === '[DONE]') continue;
-              try {
-                const json = JSON.parse(data);
-                const delta = json.choices?.[0]?.delta?.content ?? '';
-                if (delta) { fullText += delta; assistantMessage.content = fullText; scheduleAssistantRender(contentEl, fullText); }
-              } catch (_) {}
-            }
+          const truncated = finishReason === 'length';
+          if (truncated && attempt < MAX_AUTO_CONTINUATIONS && callText.trim()) {
+            apiMessages = baseMessages.concat([
+              { role: 'assistant', content: combinedText },
+              { role: 'user', content: CONTINUE_NUDGE },
+            ]);
+          } else {
+            break;
           }
-        } else {
-          const raw = await response.text();
-          let data;
-          try { data = JSON.parse(raw); } catch (_) { data = { error: { message: raw.slice(0, 500) } }; }
-          const content = data.choices?.[0]?.message?.content ?? data.error?.message ?? '';
-          fullText = content; assistantMessage.content = content;
-          updateAssistantContent(contentEl, content);
-        }
+        } while (true);
 
-        if (!fullText) { assistantMessage.content = '_No content returned._'; updateAssistantContent(contentEl, assistantMessage.content); }
-        else updateAssistantContent(contentEl, fullText);
-
+        if (!combinedText) { assistantMessage.content = '_No content returned._'; updateAssistantContent(contentEl, assistantMessage.content); }
         refreshUserFromServer();
       } catch (err) {
-        if (err.name === 'AbortError') assistantMessage.content = assistantMessage.content || '_Stopped._';
-        else assistantMessage.content = '**Error:** ' + (err.message || 'Unknown error');
+        if (err.name === 'AbortError') assistantMessage.content = assistantMessage.content || combinedText || '_Stopped._';
+        else assistantMessage.content = (combinedText ? combinedText + '\n\n' : '') + '**Error:** ' + (err.message || 'Unknown error');
         updateAssistantContent(contentEl, assistantMessage.content);
       } finally {
         state.isStreaming = false; state.abortController = null; updateSendButton();
@@ -940,14 +1087,18 @@
       renderAttachments();
     }
 
-    // === PREFS MODAL ===
+    // === PREFERENCES PAGE ===
     function openPrefs() {
-      $('#systemPrompt').value = MODES[state.mode].prompt;
+      $('#basePromptReadonly').textContent = MODES[state.mode].prompt;
+      $('#prefNickname').value = personalPrefs.nickname;
+      $('#prefAttitude').value = personalPrefs.attitude;
+      $('#prefDetail').value = personalPrefs.detail;
       $('#temperature').value = state.prefs.temperature; $('#tempValue').textContent = state.prefs.temperature;
       $('#maxTokens').value = state.prefs.maxTokens; $('#themeSelect').value = state.prefs.theme;
-      $('#prefsModal').classList.add('open');
+      $('#prefsSaveNote').classList.remove('show');
+      $('#prefsPage').classList.add('open');
     }
-    function closePrefs() { $('#prefsModal').classList.remove('open'); }
+    function closePrefs() { $('#prefsPage').classList.remove('open'); }
 
     // === REDEEM MODAL ===
     function openRedeemModal() { $('#redeemMsg').className = 'form-msg'; $('#redeemCodeInput').value = ''; $('#redeemModal').classList.add('open'); $('#redeemCodeInput').focus(); }
@@ -1105,6 +1256,7 @@
           closeLoginGate();
           await refreshUserFromServer();
           loadChats();
+          loadPersonalPrefs();
           newChat({ silent: true });
           listenAnnouncements();
         } else {
@@ -1134,15 +1286,22 @@
     // === EVENT LISTENERS ===
     $('#newChatBtn').addEventListener('click', () => newChat());
     $('#prefsBtn').addEventListener('click', openPrefs);
-    $('#closePrefs').addEventListener('click', closePrefs);
-    $('#cancelPrefs').addEventListener('click', closePrefs);
-    $('#prefsModal').addEventListener('click', (e) => { if (e.target.id === 'prefsModal') closePrefs(); });
+    $('#prefsBackBtn').addEventListener('click', closePrefs);
+    $('#prefsBackBtn2').addEventListener('click', closePrefs);
     $('#temperature').addEventListener('input', (e) => { $('#tempValue').textContent = e.target.value; });
     $('#savePrefs').addEventListener('click', () => {
       state.prefs.temperature = parseFloat($('#temperature').value);
       state.prefs.maxTokens = parseInt($('#maxTokens').value, 10) || DEFAULT_PREFS.maxTokens;
       state.prefs.theme = $('#themeSelect').value;
-      savePrefsToStorage(); applyTheme(); closePrefs();
+      savePrefsToStorage(); applyTheme();
+
+      personalPrefs.nickname = $('#prefNickname').value.trim();
+      personalPrefs.attitude = $('#prefAttitude').value.trim();
+      personalPrefs.detail = $('#prefDetail').value.trim();
+      savePersonalPrefs();
+
+      $('#prefsSaveNote').classList.add('show');
+      setTimeout(() => $('#prefsSaveNote').classList.remove('show'), 2000);
     });
     $('#clearChats').addEventListener('click', () => {
       if (!confirm('Delete all saved chats? This cannot be undone.')) return;
@@ -1178,6 +1337,15 @@
     $('#sendBtn').addEventListener('click', sendMessage);
 
     $('#messages').addEventListener('click', async (e) => {
+      const fileHead = e.target.closest('.file-card-head');
+      if (fileHead) {
+        const card = fileHead.closest('.file-card');
+        const body = card.querySelector('.file-card-body');
+        const willOpen = body.hasAttribute('hidden');
+        if (willOpen) body.removeAttribute('hidden'); else body.setAttribute('hidden', '');
+        card.classList.toggle('open', willOpen);
+        return;
+      }
       const copyBtn = e.target.closest('.copy-btn');
       if (copyBtn) {
         const block = copyBtn.closest('.code-block');
