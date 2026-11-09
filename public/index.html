@@ -6,25 +6,25 @@
   <title>Forcx Agent Ai</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0c0f13;
-      --bg-elev: #13171d;
-      --bg-elev-2: #1a1f27;
-      --bg-elev-3: #212733;
-      --border: #262c37;
-      --border-soft: #1d232c;
-      --text: #e9ecf1;
-      --muted: #828b99;
-      --muted-dim: #596270;
+      --bg: #070708;
+      --bg-elev: #0e0e10;
+      --bg-elev-2: #151518;
+      --bg-elev-3: #1d1d21;
+      --border: #26262b;
+      --border-soft: #19191d;
+      --text: #ededef;
+      --muted: #8e8e96;
+      --muted-dim: #5f5f67;
       --accent: #ff8a42;
       --accent-dim: #c96a33;
       --accent-ink: #1a0f07;
       --signal: #3ecf8e;
       --danger: #ff5f73;
-      --code-bg: #0a0d11;
-      --user-bubble: #1a2029;
+      --code-bg: #050506;
+      --user-bubble: #151518;
       --font-ui: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
     }
@@ -149,19 +149,19 @@
     .code-block code { font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55; white-space: pre; color: #d7dce8; }
     [data-theme="light"] .code-block code { color: #24292f; }
 
-    /* ---------- File card (file deliverables render as a clickable block, not raw text) ---------- */
-    .file-card { margin: 12px 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--bg-elev-2); max-width: 360px; }
-    .file-card-head { width: 100%; display: flex; align-items: center; gap: 10px; padding: 11px 13px; background: transparent; border: 0; text-align: left; color: var(--text); }
-    .file-card-head:hover { background: var(--bg-elev-3); }
-    .file-card .file-icon { width: 30px; height: 30px; border-radius: 8px; background: var(--accent-ink); border: 1px solid var(--accent-dim); display: grid; place-items: center; font-size: 14px; flex-shrink: 0; }
-    .file-card .file-info { min-width: 0; flex: 1; }
+    /* ---------- File card (tap = copy if short, download if long, ZIP bundles auto) ---------- */
+    .file-card { margin: 12px 0; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--bg-elev-2); max-width: 380px; transition: border-color 0.15s, transform 0.1s; }
+    .file-card:hover { border-color: var(--accent-dim); }
+    .file-card:active { transform: scale(0.99); }
+    .file-card.done { border-color: var(--signal); }
+    .file-card-head { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: transparent; border: 0; text-align: left; color: var(--text); }
+    .file-card .file-icon { width: 34px; height: 34px; border-radius: 10px; background: var(--accent-ink); border: 1px solid var(--accent-dim); display: grid; place-items: center; font-size: 15px; flex-shrink: 0; }
+    .file-card .file-info { min-width: 0; flex: 1; display: flex; flex-direction: column; }
     .file-card .file-name { font-family: var(--font-mono); font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .file-card .file-meta { font-size: 11px; color: var(--muted-dim); margin-top: 1px; }
-    .file-card .file-chevron { color: var(--muted); font-size: 12px; transition: transform 0.15s; flex-shrink: 0; }
-    .file-card.open .file-chevron { transform: rotate(90deg); }
-    .file-card-body { border-top: 1px solid var(--border); }
-    .file-card-body[hidden] { display: none; }
-    .file-card-body .code-block { margin: 0; border: 0; border-radius: 0; }
+    .file-card .file-meta { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+    .file-card.done .file-meta { color: var(--signal); }
+    .file-card .file-action { color: var(--accent); font-size: 16px; flex-shrink: 0; }
+    .file-src { display: none; }
 
     /* ---------- Composer ---------- */
     .composer-wrap { padding: 10px 20px 16px; flex-shrink: 0; }
@@ -272,6 +272,57 @@
     /* ---------- Lock badge on mode option (visual hint lives in select label text) ---------- */
     .locked-banner { background: rgba(255,138,66,0.08); border: 1px solid var(--accent-dim); color: var(--accent); font-size: 12px; padding: 8px 10px; border-radius: 8px; font-family: var(--font-mono); }
 
+    /* ---------- Theme v2: pure-black, Claude-like polish ---------- */
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-thumb { background: var(--bg-elev-3); border-radius: 999px; border: 3px solid var(--bg); }
+    ::-webkit-scrollbar-track { background: transparent; }
+    .sidebar { background: var(--bg-elev); }
+    .brand { font-size: 18px; }
+    .new-chat-btn { background: var(--bg-elev-2); border-radius: 12px; padding: 11px 12px; }
+    .new-chat-btn:hover { background: var(--bg-elev-3); }
+    .history-item { border-radius: 10px; }
+    .topbar { border-bottom: 0; background: transparent; padding: 14px 20px; }
+    .model-badge { border-radius: 999px; padding: 5px 13px; font-size: 12px; }
+    .messages { padding-top: 12px; }
+    .msg { animation: msgIn 0.3s ease both; }
+    @keyframes msgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .msg.user .bubble { background: var(--bg-elev-2); border: 1px solid var(--border-soft); border-radius: 18px 18px 4px 18px; padding: 11px 15px; }
+    .message-content { font-size: 15px; line-height: 1.72; }
+    .composer { border-radius: 24px; background: var(--bg-elev); padding: 12px 14px; box-shadow: 0 10px 40px rgba(0,0,0,0.55); }
+    .composer:focus-within { border-color: var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.55), 0 0 0 3px rgba(255,138,66,0.10); }
+    .mode-select, .attach-btn { border-radius: 999px; padding: 7px 13px; }
+    .send-btn { width: 38px; height: 38px; padding: 0; border-radius: 50%; display: grid; place-items: center; font-size: 18px; line-height: 1; }
+    .welcome { margin-top: 11vh; }
+    .welcome-logo { width: 58px; height: 58px; border-radius: 17px; box-shadow: 0 0 46px rgba(255,138,66,0.28); }
+    .welcome h1 { font-family: "Newsreader", Georgia, serif; font-weight: 500; font-size: 40px; letter-spacing: -0.8px; margin-bottom: 10px; }
+    .suggestion { border-radius: 14px; padding: 14px 16px; }
+    .code-block { border-radius: 12px; }
+
+    /* ---------- Thinking indicator ---------- */
+    .thinking { display: flex; align-items: center; gap: 12px; padding: 2px 0; }
+    .think-orb { position: relative; width: 44px; height: 44px; flex-shrink: 0; }
+    .think-logo { position: absolute; inset: 9px; width: 26px; height: 26px; border-radius: 8px; object-fit: cover; animation: thinkPulse 1.6s ease-in-out infinite; }
+    .think-orbit { position: absolute; inset: 0; animation: thinkSpin 2.2s linear infinite; }
+    .think-dot { position: absolute; top: 0; left: 50%; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ffffff 0%, #ffe3d0 30%, #ff8a42 100%); box-shadow: 0 0 12px rgba(255,138,66,0.75); animation: thinkDot 1.6s ease-in-out infinite; }
+    @keyframes thinkSpin { to { transform: rotate(360deg); } }
+    @keyframes thinkPulse { 0%, 100% { transform: scale(0.8); } 50% { transform: scale(1.14); } }
+    @keyframes thinkDot { 0%, 100% { transform: scale(0.55); } 50% { transform: scale(1.3); } }
+    .think-text { display: inline-flex; font-weight: 600; font-size: 16px; letter-spacing: 0.3px; }
+    .think-text span {
+      display: inline-block;
+      background: linear-gradient(90deg, #6a6a72 0%, #ff8a42 22%, #ffffff 50%, #ff8a42 78%, #6a6a72 100%);
+      background-size: 400% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
+      animation: thinkShimmer 2.6s linear infinite, thinkWave 1.3s ease-in-out infinite;
+      animation-delay: calc(var(--i) * -0.16s), calc(var(--i) * -0.11s);
+    }
+    @keyframes thinkShimmer { from { background-position: 0% 50%; } to { background-position: 400% 50%; } }
+    @keyframes thinkWave { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+    @media (prefers-reduced-motion: reduce) {
+      .think-logo, .think-orbit, .think-dot, .think-text span, .msg { animation: none; }
+    }
+
     @media (max-width: 800px) {
       .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); transition: transform 0.25s ease; box-shadow: 20px 0 60px rgba(0,0,0,0.4); }
       .sidebar.open { transform: translateX(0); }
@@ -373,7 +424,7 @@
                 <input type="file" id="fileInput" multiple hidden accept="*/*" />
               </label>
             </div>
-            <button class="send-btn" id="sendBtn" type="button">Send</button>
+            <button class="send-btn" id="sendBtn" type="button" aria-label="Kirim">↑</button>
           </div>
         </div>
         <div class="composer-hint">Forcx bisa salah. Cek ulang kode dan hasil penting.</div>
@@ -517,6 +568,8 @@
     const $ = (sel) => document.querySelector(sel);
     const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
+    const COPY_MAX_LINES = 25; // file cards with <= this many lines copy on tap; longer ones download
+
     // === MODES ===
     const MODES = {
       normal: { name: 'Normal', model: 'claude-sonnet-4-6', logo: 'https://files.catbox.moe/p7f81f.jpg',
@@ -651,18 +704,29 @@
         const actionsHtml = `<button class="download-btn" type="button" data-filename="${escapeHtml(filename || 'file.' + lang)}">⬇ Download</button><button class="copy-btn" type="button">Copy</button>`;
         const codeBlock = '<div class="code-block"><div class="code-head"><span class="code-lang">' + escapeHtml(lang) + '</span><div class="code-actions">' + actionsHtml + '</div></div><pre><code>' + escapeHtml(code) + '</code></pre></div>';
 
-        // Files the model delivers via `filename=` render as a collapsed, clickable
-        // file card (like a real file attachment) instead of a wall of raw text.
+        // Files delivered via `filename=` render as a tappable card:
+        //  - .zip bundles -> built into a real zip and downloaded
+        //  - <= COPY_MAX_LINES lines -> copied to clipboard
+        //  - longer -> downloaded as a file
         if (filename) {
-          const lineCount = code.split('\n').length;
-          return '<div class="file-card">' +
+          const trimmed = code.replace(/\n+$/, '');
+          let meta, icon, mode;
+          if (/\.zip$/i.test(filename)) {
+            const n = (trimmed.match(/^=== FILE: .+? ===[ \t]*$/gm) || []).length;
+            meta = 'ZIP · ' + n + ' file · ketuk untuk unduh'; icon = '⬇'; mode = 'zip';
+          } else {
+            const lines = trimmed.split('\n').length;
+            if (lines <= COPY_MAX_LINES) { meta = lines + ' baris · ketuk untuk salin'; icon = '⧉'; mode = 'copy'; }
+            else { meta = lines + ' baris · ketuk untuk unduh'; icon = '⬇'; mode = 'download'; }
+          }
+          return '<div class="file-card" data-mode="' + mode + '" data-filename="' + escapeHtml(filename) + '">' +
             '<button class="file-card-head" type="button">' +
-              '<span class="file-icon">📄</span>' +
+              '<span class="file-icon">' + (mode === 'zip' ? '🗜' : '📄') + '</span>' +
               '<span class="file-info"><span class="file-name">' + escapeHtml(filename) + '</span>' +
-              '<span class="file-meta">' + lineCount + ' baris · ' + escapeHtml(lang) + '</span></span>' +
-              '<span class="file-chevron">▸</span>' +
+              '<span class="file-meta">' + escapeHtml(meta) + '</span></span>' +
+              '<span class="file-action">' + icon + '</span>' +
             '</button>' +
-            '<div class="file-card-body" hidden>' + codeBlock + '</div>' +
+            '<pre class="file-src" hidden>' + escapeHtml(code) + '</pre>' +
           '</div>';
         }
         return codeBlock;
@@ -757,11 +821,14 @@
     }
 
     // === RENDER MESSAGES ===
+    function greetingName() {
+      return personalPrefs.nickname || (appUser.name ? appUser.name.split(' ')[0] : '');
+    }
     function welcomeHtml() {
       const currentLogo = MODES[state.mode].logo;
       const suggestions = ['Rapihin struktur project ini', 'Buatkan komponen React + Tailwind', 'Bantu debug error ini', 'Ringkas isi file ZIP yang saya kirim'];
       return '<div class="welcome">' + `<img class="welcome-logo" id="mainLogo" src="${currentLogo}" alt="Logo" />` +
-        '<h1>Forcx Agent</h1><p>Workspace AI kamu — kirim teks, kode, gambar, video, atau project ZIP sekaligus.</p>' +
+        '<h1>' + (greetingName() ? 'Halo, ' + escapeHtml(greetingName()) : 'Forcx Agent') + '</h1><p>Workspace AI kamu — kirim teks, kode, gambar, video, atau project ZIP sekaligus.</p>' +
         '<div class="suggestions">' + suggestions.map((s) => '<button class="suggestion" type="button">' + escapeHtml(s) + '</button>').join('') + '</div></div>';
     }
     function attachmentChipHtml(a) {
@@ -769,6 +836,12 @@
       if (a.kind === 'video') return '<span class="attachment-chip">🎬 ' + escapeHtml(a.name) + '</span>';
       if (a.kind === 'zip') return '<span class="attachment-chip">🗜 ' + escapeHtml(a.name) + ' · ' + a.files.length + ' files</span>';
       return '<span class="attachment-chip">📄 ' + escapeHtml(a.name) + '</span>';
+    }
+    function thinkingHtml() {
+      const logo = MODES[state.mode].logo;
+      const letters = 'Thinking'.split('').map((c, i) => '<span style="--i:' + i + '">' + c + '</span>').join('');
+      return '<div class="thinking"><div class="think-orb"><div class="think-orbit"><span class="think-dot"></span></div>' +
+        '<img class="think-logo" src="' + logo + '" alt="" /></div><div class="think-text">' + letters + '</div></div>';
     }
     function messageHtml(message, index) {
       const currentLogo = MODES[state.mode].logo;
@@ -786,7 +859,7 @@
       }
       const cls = message.isNotice ? 'message-content notice' : 'message-content';
       return '<div class="msg assistant" data-index="' + index + '">' + `<img class="avatar ai" src="${currentLogo}" alt="AI" />` +
-        '<div class="bubble"><div class="' + cls + '">' + renderMarkdown(message.content) + '</div></div></div>';
+        '<div class="bubble"><div class="' + cls + '">' + ((message.pending && !message.content) ? thinkingHtml() : renderMarkdown(message.content)) + '</div></div></div>';
     }
     function renderMessages() {
       const container = $('#messages');
@@ -831,7 +904,8 @@
     function updateComposerHeight() { const ta = $('#input'); ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 200) + 'px'; }
     function updateSendButton() {
       const btn = $('#sendBtn');
-      btn.textContent = state.isStreaming ? 'Stop' : 'Send';
+      btn.textContent = state.isStreaming ? '■' : '↑';
+      btn.setAttribute('aria-label', state.isStreaming ? 'Stop' : 'Kirim');
       btn.classList.toggle('stop', state.isStreaming);
       $('#statusDot').classList.toggle('busy', state.isStreaming);
       $('#statusText').textContent = state.isStreaming ? 'Thinking…' : 'Ready';
@@ -851,7 +925,12 @@
     function buildApiMessages() {
       const messages = [];
       const basePrompt = MODES[state.mode].prompt;
-      const fileInstruction = "\n\nIMPORTANT: If you need to provide a file (new or modified) to the user — zip contents, html, py, js, or any other file — format the code block with a filename attribute: ` ```language filename=\"filename.ext\" `. It will render in the UI as a clickable file card, not raw text. ALWAYS output the file's full, complete content inside that block: never truncate, never use '...', '// rest of code', or any placeholder standing in for real content, no matter how long the file is. If the user wants several files, output one complete fenced block per file, each with its own filename. If you need to show a video you reference by URL, use a fenced block: ` ```video url=\"https://...\" `. Images can be returned as normal markdown ![alt](url) and will render inline.";
+      const fileInstruction = "\n\nIMPORTANT — FILE DELIVERY RULES:\n" +
+        "1) Any file you give the user (html, py, js, css, json, md, etc.) MUST be a fenced block with a filename attribute: ```language filename=\"name.ext\". The UI shows it as a tappable file card (short files copy on tap, long files download), so do NOT paste file contents as plain text.\n" +
+        "2) ALWAYS write the file's full, complete content. Never truncate, never write '...', '// rest of code', or any placeholder instead of real content, no matter how long.\n" +
+        "3) If a file's content itself contains triple backticks, wrap that file in a four-backtick fence instead.\n" +
+        "4) For several files or a project/zip, output ONE four-backtick block: ````zip filename=\"project.zip\" and inside it, for every file, a line `=== FILE: path/to/file.ext ===` followed by that file's full content. The UI builds a real .zip automatically. Never output base64 or binary.\n" +
+        "5) Videos by URL: ```video url=\"https://...\". Images: normal markdown ![alt](url).";
       const personalization = buildPersonalizationBlock();
       messages.push({ role: 'system', content: basePrompt + fileInstruction + personalization });
       for (const m of state.messages) {
@@ -979,7 +1058,7 @@
       state.abortController = new AbortController();
       updateSendButton();
 
-      const assistantMessage = { role: 'assistant', content: '' };
+      const assistantMessage = { role: 'assistant', content: '', pending: true };
       state.messages.push(assistantMessage);
       renderMessages();
 
@@ -1027,10 +1106,65 @@
         else assistantMessage.content = (combinedText ? combinedText + '\n\n' : '') + '**Error:** ' + (err.message || 'Unknown error');
         updateAssistantContent(contentEl, assistantMessage.content);
       } finally {
+        delete assistantMessage.pending;
         state.isStreaming = false; state.abortController = null; updateSendButton();
         const chat = getCurrentChat();
         if (chat) { chat.messages = state.messages; saveChats(); }
       }
+    }
+
+    // === FILE CARD ACTIONS ===
+    function triggerDownload(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+    async function copyText(text) {
+      try { await navigator.clipboard.writeText(text); }
+      catch (_) {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+      }
+    }
+    // Bundle format the model writes inside a ````zip filename="x.zip" block:
+    //   === FILE: path/to/file.ext ===
+    //   <full file content>
+    async function downloadZipFromBundle(zipName, bundle) {
+      if (typeof JSZip === 'undefined') throw new Error('JSZip belum termuat');
+      const re = /^=== FILE: (.+?) ===[ \t]*\r?\n/gm;
+      const marks = []; let m;
+      while ((m = re.exec(bundle)) !== null) marks.push({ path: m[1].trim(), start: m.index, bodyStart: re.lastIndex });
+      if (!marks.length) throw new Error('format ZIP tidak valid');
+      const zip = new JSZip();
+      marks.forEach((mk, i) => {
+        const end = i + 1 < marks.length ? marks[i + 1].start : bundle.length;
+        const body = bundle.slice(mk.bodyStart, end).replace(/\n$/, '');
+        const safePath = mk.path.split('/').filter((x) => x && x !== '.' && x !== '..').join('/');
+        if (safePath) zip.file(safePath, body);
+      });
+      const blob = await zip.generateAsync({ type: 'blob' });
+      triggerDownload(blob, zipName);
+    }
+    async function handleFileCard(card) {
+      if (!card) return;
+      const mode = card.dataset.mode;
+      const filename = card.dataset.filename || 'file.txt';
+      const src = card.querySelector('.file-src');
+      const code = src ? src.textContent : '';
+      const metaEl = card.querySelector('.file-meta');
+      const oldMeta = metaEl.textContent;
+      const flash = (msg) => {
+        card.classList.add('done'); metaEl.textContent = msg;
+        setTimeout(() => { card.classList.remove('done'); metaEl.textContent = oldMeta; }, 1800);
+      };
+      try {
+        if (mode === 'copy') { await copyText(code.replace(/\n+$/, '')); flash('Tersalin ✓'); }
+        else if (mode === 'zip') { await downloadZipFromBundle(filename, code); flash('Terunduh ✓'); }
+        else { triggerDownload(new Blob([code], { type: 'application/octet-stream' }), filename); flash('Terunduh ✓'); }
+      } catch (err) { flash('Gagal: ' + (err.message || err)); }
     }
 
     // === FILE HANDLING (unchanged) ===
@@ -1338,14 +1472,7 @@
 
     $('#messages').addEventListener('click', async (e) => {
       const fileHead = e.target.closest('.file-card-head');
-      if (fileHead) {
-        const card = fileHead.closest('.file-card');
-        const body = card.querySelector('.file-card-body');
-        const willOpen = body.hasAttribute('hidden');
-        if (willOpen) body.removeAttribute('hidden'); else body.setAttribute('hidden', '');
-        card.classList.toggle('open', willOpen);
-        return;
-      }
+      if (fileHead) { await handleFileCard(fileHead.closest('.file-card')); return; }
       const copyBtn = e.target.closest('.copy-btn');
       if (copyBtn) {
         const block = copyBtn.closest('.code-block');
